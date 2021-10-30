@@ -47,27 +47,47 @@ class Robot
 			   						  int forwardRight, int backwardRight,
 			   						  int frontTriggerPin, int frontEchoPin, 
 			   						  int leftTriggerPin, int leftEchoPin, 
-			   						  int rightTriggerPin, int frontEchoPin);
+			   						  int rightTriggerPin, int frontEchoPin,
+			   						  "W" // initial cardinal orientation
+			   					);
 				
 			this->ColorDetector = new ColorDetector();
-			this->orientation = "W";
 		}
 		
 		void setup()
 		{
 			this->chasis->setup();
+			this->ColorDetector->setup();
 		}
 
-		void updatePosition(bool front) 
+		void updatePosition(bool advace) 
 		{
-			// if front is false we assume the movement is backwards
+			// if advance is false we assume the movement is backwards
 			// position is changed due to orientation
-			if (front) {
+			int delta = -1;	
+			if (advance) { 
+				delta = 1;
+			} 
 
+			switch (this->chasis->cardinalOrientation) {
+				case "N":
+					this->positionStage1[0] -= delta; 
+					break;
+				case "E":
+					this->positionStage1[1] += delta; 
+					break;
+				case "S":
+					this->positionStage1[0] += delta; 
+					break;
+				case "W":
+					this->positionStage1[1] -= delta;
+					break;
+				default:
+					break;
 			}
 		}
 
-		bool checkIfExitFound() 
+		void checkIfExitFound() 
 		{
 			// returns true if the robot is currently at the exit of the maze
 			if (this->positionStage1[0] == 2 && this->positionStage1[1] == 0) {
@@ -77,7 +97,17 @@ class Robot
 			// when no longer at the exit
 		}
 
-		void solveStageOne() 
+		bool checkIfAtExit() 
+		{
+			// Returns true if at exit, so that the robot does not continue into 
+			// stage 2
+			if (this->positionStage1[0] == 2 && this->positionStage1[1] == 0) {
+				return true;
+			}
+			return false;
+		}
+
+		void exproreAllStage1() 
 		{
 
 			char moves[3] = {'f', 'l', 'r'}; 
@@ -85,12 +115,38 @@ class Robot
 				if (this->chasis->checkMove(moves[i])) {
 					char move = moves[i];
 					this->chasis->makeMove(move);
-					
+					if (this->exitFound) {
+						this->movesSinceExit[nMovesSinceExit] = move;
+						this->nMovesSinceExit++;
+					}
+
+					this->upDatePosition(true);
+					this->checkIfExitFound();
+					if (this->checkIfAtExit()) {
+						// prevent it from going on
+						break;
+					}
 					this->solveStageOne();
-					return move;
+					this->chasis->makeOppositeMove(move);
+					this->upDatePosition(false);
 				}
+
 			}
 
+		}
+
+		void getToExitStage1() 
+		{
+			// check all stored moves and return to the exit
+			for (int i = this->nMovesSinceExit; i > -1; i--) {
+				this->chasis->makeOppositeMove(movesSinceExit[i]);
+			}
+		}
+		
+		void solveStageOne()
+		{
+			this->exploreAllStage1();
+			this->getToExitStage1();
 		}
 
 		void solveStageTwo()
