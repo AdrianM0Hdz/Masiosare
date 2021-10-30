@@ -14,7 +14,7 @@ class Gyro
 		float roll = 0.0;
 		unsigned long timer = 0;
 		const double timeStep = 0.001; // seconds, one milisecond
-		MPU6050 mpu;
+		MPU6050 mpu; // inner mpu
 	public:
 		Gyro() 
 		{

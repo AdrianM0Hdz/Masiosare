@@ -29,13 +29,17 @@ class ColorSensor
 			pinMode(this->ledPin, OUTPUT);
 		}
 
-		int *readRGB() 
+		int readRGB() 
 		{
 
 		}
 
 		char readColor() 
 		{
-
+			// maps RGB colors to a specific color 
+			// "B" = Blue
+			// "G" = Green
+			// "R" = Red
+			// ""
 		}
 };	
