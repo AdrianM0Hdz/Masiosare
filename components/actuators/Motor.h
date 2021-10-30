@@ -21,7 +21,7 @@ class Motor
 		{
 			pinMode(this->forwardPin, OUTPUT);
 			pinMode(this->backwardPin, OUTPUT);
-		}
+		} 
 
 		void halt()
 		{

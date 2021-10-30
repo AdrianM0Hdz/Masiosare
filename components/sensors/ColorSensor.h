@@ -10,7 +10,7 @@ class ColorSensor
 		int s2Pin;
 		int s3Pin;
 		//                           Lower Upper
-		const int[][] colorRanges = {{0, 100}};
+		const int colorRanges[1][2] = {{0, 100}};
 	
 	public:
 		ColorSensor(int ledPin, int outPin, int s0Pin, 
@@ -29,7 +29,7 @@ class ColorSensor
 			pinMode(this->ledPin, OUTPUT);
 		}
 
-		int[] readRGB() 
+		int *readRGB() 
 		{
 
 		}

@@ -9,7 +9,7 @@ class ColorDetector
 {
 	private:
 		// Left and right color sensors
-		ColorSensor leftColorSensor, rightColorSensor;
+		ColorSensor *leftColorSensor, *rightColorSensor;
 	public:
 		ColorDetector() 
 		{

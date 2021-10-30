@@ -15,7 +15,7 @@ class CServo
 	public:
 		CServo(int pwnPin) 
 		{
-			this->pwnPin;
+			this->pwnPin = pwnPin;
 		}
 	
 		void setup()
