@@ -28,7 +28,7 @@ class Chasis
 			   int forwardRight, int backwardRight,
 			   int frontTriggerPin, int frontEchoPin, 
 			   int leftTriggerPin, int leftEchoPin, 
-			   int rightTriggerPin, int frontEchoPin
+			   int rightTriggerPin, int rightEchoPin,
 			   char cardinalOrientation)
 		{
 			// motors
@@ -36,25 +36,25 @@ class Chasis
 			this->rightMotor = new Motor(forwardRight, backwardRight);
 
 			// ultrasonics
-			this->frontUltrasonic = new Motor(frontTriggerPin, frontEchoPin);
-			this->leftUltrasonic = new Motor(leftTriggerPin, leftEchoPin);
-			this->rightUltrasonic = new Motor(rightTriggerPin, rightEchoPin);
+			this->frontUltrasonic = new Ultrasonic(frontTriggerPin, frontEchoPin);
+			this->leftUltrasonic = new Ultrasonic(leftTriggerPin, leftEchoPin);
+			this->rightUltrasonic = new Ultrasonic(rightTriggerPin, rightEchoPin);
 		
 			// gyroscope
 			this->gyro = new Gyro();
 
-			this->cardianlOrientation = cardinalOrientation;
+			this->cardinalOrientation = cardinalOrientation;
 		}
 		
 		void setup()
 		{
 			// motors
 			this->leftMotor->setup();
-			this->rightMotor.setup();
+			this->rightMotor->setup();
 			
 			// ultrsonics 
-			this->frontUltrasonics->setup();
-			this->leftUltrsonic->setup();
+			this->frontUltrasonic->setup();
+			this->leftUltrasonic->setup();
 			this->rightUltrasonic->setup();
 		
 			// gyro
@@ -81,16 +81,16 @@ class Chasis
 			
 			// modify cardinal orientation 
 			switch (this->cardinalOrientation) {
-				case "N":
+				case 'N':
 					this->cardinalOrientation = "W";
 					break;
-				case "E":
+				case 'E':
 					this->cardinalOrientation = "N";
 					break;
-				case "S":
+				case 'S':
 					this->cardinalOrientation = "E";
 					break;
-				case "W":
+				case 'W':
 					this->cardinalOrientation = "S";
 					break;
 				default:
@@ -118,16 +118,16 @@ class Chasis
 			
 			// change cardinal orientation
 			switch (this->cardinalOrientation) {
-				case "N":
+				case 'N':
 					this->cardinalOrientation = "E";
 					break;
-				case "E":
+				case 'E':
 					this->cardinalOrientation = "S";
 					break;
-				case "S":
+				case 'S':
 					this->cardinalOrientation = "W";
 					break;
-				case "W":
+				case 'W':
 					this->cardinalOrientation = "N";
 					break;
 				default:
@@ -146,7 +146,7 @@ class Chasis
 			}
 		}
 		
-		void retreatSqure() 
+		void retreatSquare() 
 		{
 			this->leftMotor->retreat();
 			this->rightMotor->retreat();
@@ -173,24 +173,24 @@ class Chasis
 		void moveRight()
 		{
 			this->turnRight();
-			this->advaceSquare();
+			this->advanceSquare();
 		}
 
 		bool checkMove(char move) 
 		{
 			// Checks if a move is doable
 			switch (move) {
-				case "F":
+				case 'F':
 					if (this->frontUltrasonic->readDistance() < 20.0) {
 						return false;
 					}
 					break;
-				case "L":
+				case 'L':
 					if (this->leftUltrasonic->readDistance() < 20.0) {
 						return false;
 					}
 					break;
-				case "R":
+				case 'R':
 					if (this->rightUltrasonic->readDistance() < 20.0) {
 						return false;
 					}
@@ -210,16 +210,16 @@ class Chasis
 			// TODO: IMPLEMENT CHECKING IF THE MOVE IS DOABLE
 			if (this->checkMove(move)) {
 				switch (move) {
-					case "F":
+					case 'F':
 						this->advanceSquare();
 						break;
-					case "B":
+					case 'B':
 						this->retreatSquare();
 						break;
-					case "L":
+					case 'L':
 						this->moveLeft();
 						break;
-					case "R":
+					case 'R':
 						this->moveRight();
 						break;
 					default:
@@ -234,18 +234,23 @@ class Chasis
 			// We will always do the inverse of a move we have done, thus there is no need to check that
 			// it is possible
 			switch (move) {
-				case "F":
+				case 'F':
 					this->retreatSquare();
 					break;
-				case "B":
+				case 'B':
 					this->advanceSquare();
 					break;
-				case "L":
+				case 'L':
 					this->moveRight();
-				case "R":
+				case 'R':
 					this->moveLeft();
 				default:
 					break;
 			} 
+		}
+
+		char getCardinalOrientation()
+		{
+			return this->cardinalOrientation;
 		}
 };

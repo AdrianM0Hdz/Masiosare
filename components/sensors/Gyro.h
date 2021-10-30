@@ -25,8 +25,14 @@ class Gyro
 			/* We perform initial claibrations
 			**
 			*/
-			mpu.calibrateGyro();
-			mpu.setTreshold(3);
+			while(!mpu.begin(MPU6050_SCALE_2000DPS, MPU6050_RANGE_2G))
+  			{
+  			  Serial.println("Could not find a valid MPU6050 sensor, check wiring!");
+  			  delay(500);
+  			}
+
+			this->mpu.calibrateGyro();
+			this->mpu.setThreshold(3);
 		}
 		void resetOrientation()
 		{
@@ -37,19 +43,19 @@ class Gyro
 			this->pitch = 0.0;
 			this->roll = 0.0;
 		}
-		void updateAngles(double timeStep, unsigned long timer)
+		void updateAngles(double timeStep)
 		{	
 			// timer its current time
 			// time step is in seconds
 			// updates the angles of the gyroscope given a time step
 			Vector accs = mpu.readNormalizeGyro();
-		    this->pitch += timeStep * acc.XAxis;
-		    this->roll += timeStep * acc.YAxis;
-		    this->yaw += timeStep * acc.ZAxis;
+		    this->pitch += timeStep * accs.XAxis;
+		    this->roll += timeStep * accs.YAxis;
+		    this->yaw += timeStep * accs.ZAxis;
 
 		    // wait for time step to finish so that it can be updated again
 
-		    delay(timeStep*1000 -(milis() - timer));
+		    delay(timeStep*1000);
 		}	
 		float getYaw() 
 		{

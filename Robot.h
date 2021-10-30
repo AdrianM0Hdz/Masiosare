@@ -18,11 +18,9 @@ class Robot
 		Gate* gate;
 		
 		// 						row col
-		int positionStage1[] = {0 , 4};
+		int positionStage1[2] = {0 , 4};
+		
 		// map of the first stage with the player in its initial posisiton 
-		char stageOneMap[][] = {{"U", "U", "U", "U", "U", "V"},
-								{"U", "U", "U", "U", "U", "B"},
-								{"U", "U", "U", "U", "U", "B"}};
 		// record mooves done since reaching the exit to be able to reach it again
 		
 		char movesSinceExit[45];
@@ -41,26 +39,26 @@ class Robot
 			  int forwardRight, int backwardRight,
 			  int frontTriggerPin, int frontEchoPin, 
 			  int leftTriggerPin, int leftEchoPin, 
-			  int rightTriggerPin, int frontEchoPin)
+			  int rightTriggerPin, int rightEchoPin)
 		{
-			this->chasis = new Chasis(int forwardLeft, int backwardLeft, 
-			   						  int forwardRight, int backwardRight,
-			   						  int frontTriggerPin, int frontEchoPin, 
-			   						  int leftTriggerPin, int leftEchoPin, 
-			   						  int rightTriggerPin, int frontEchoPin,
+			this->chasis = new Chasis(forwardLeft, backwardLeft, 
+			   						  forwardRight, backwardRight,
+			   						  frontTriggerPin, frontEchoPin, 
+			   						  leftTriggerPin, leftEchoPin, 
+			   						  rightTriggerPin, rightEchoPin,
 			   						  "W" // initial cardinal orientation
 			   					);
 				
-			this->ColorDetector = new ColorDetector();
+			this->colorDetector = new ColorDetector();
 		}
 		
 		void setup()
 		{
 			this->chasis->setup();
-			this->ColorDetector->setup();
+			this->colorDetector->setup();
 		}
 
-		void updatePosition(bool advace) 
+		void updatePosition(bool advance) 
 		{
 			// if advance is false we assume the movement is backwards
 			// position is changed due to orientation
@@ -69,17 +67,17 @@ class Robot
 				delta = 1;
 			} 
 
-			switch (this->chasis->cardinalOrientation) {
-				case "N":
+			switch (this->chasis->getCardinalOrientation()) {
+				case 'N':
 					this->positionStage1[0] -= delta; 
 					break;
-				case "E":
+				case 'E':
 					this->positionStage1[1] += delta; 
 					break;
-				case "S":
+				case 'S':
 					this->positionStage1[0] += delta; 
 					break;
-				case "W":
+				case 'W':
 					this->positionStage1[1] -= delta;
 					break;
 				default:
@@ -107,10 +105,10 @@ class Robot
 			return false;
 		}
 
-		void exproreAllStage1() 
+		void exploreAllStage1() 
 		{
 
-			char moves[3] = {'f', 'l', 'r'}; 
+			char moves[] = {'f', 'l', 'r'}; 
 			for (int i = 0; i < 3; i++) {
 				if (this->chasis->checkMove(moves[i])) {
 					char move = moves[i];
@@ -120,15 +118,15 @@ class Robot
 						this->nMovesSinceExit++;
 					}
 
-					this->upDatePosition(true);
+					this->updatePosition(true);
 					this->checkIfExitFound();
 					if (this->checkIfAtExit()) {
 						// prevent it from going on
 						break;
 					}
-					this->solveStageOne();
+					this->exploreAllStage1();
 					this->chasis->makeOppositeMove(move);
-					this->upDatePosition(false);
+					this->updatePosition(false);
 				}
 
 			}
@@ -155,6 +153,11 @@ class Robot
 		}
 
 		void solveStageThree()
+		{
+
+		}
+
+		void solveAll() 
 		{
 
 		}

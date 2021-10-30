@@ -15,6 +15,11 @@ class ColorDetector
 		{
 
 		}
+
+		void setup()
+		{
+			
+		}
 		char getLeftColor() 
 		{
 
